@@ -1,0 +1,16 @@
+package addressbook;
+
+public class AddressBookApp {
+
+	public static void main(String[] args) {
+		AddressLogic logic = new AddressLogic();
+
+		logic.mainmenu();//메인메뉴 불러오기
+		
+		int gotNumb= logic.getmenu();//메뉴번호 입력받기
+		
+		logic.separation(gotNumb);//메뉴번호에 따른 분기
+		
+	}
+
+}
