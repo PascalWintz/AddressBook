@@ -1,17 +1,25 @@
 package addressbook;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.Vector;
 
+import common.util.CommonUtilities;
 
 public class AddressLogic {
-		List<Contact> contact;
+	 Map<Character, List<Address>> address = new HashMap<Character, List<Address>>();
+
+	 //valueList = new Vector<Contact>();
+	 List<Address> valueList = null; 
+
 		int gotNumb= 0;
 
 		public AddressLogic() {
 			
-			contact = new Vector<Contact>();
+		List<Address>address = new Vector<Address>();
 		}
 	
 	public void mainmenu() {
@@ -40,61 +48,101 @@ public class AddressLogic {
 		switch(gotNumb){
 		case 1: importData(); break;
 		case 2: printData(); break;
-		case 5: searchData();break;
-		case 9: exitProgram(); break;
+		case 5: searchData(); break;
+		case 9: 
 			default: System.out.println("존재하지 않는 메뉴번호 입니다");
 		}
-		
+	
 	}/////////seperation()
 
-	private void importData() {
-		Scanner sc= new Scanner(System.in);
-		System.out.println("이름을 입력해주세요");
-		String name= sc.nextLine();
-		System.out.println("전화번호를 입력해주세요");
-		String tel= sc.nextLine();
-		System.out.println("연락처를 입력해주세요");
-		String address= sc.nextLine();
-		contact.add(new Contact(name,tel,address));
-		System.out.println("성공적으로 저장되었습니다\r\n");
-		backToFirst();
-		
-	}////////importData
-	
+	public void importData() {
+		Scanner sc = new Scanner(System.in);
+		boolean goingout= false;
+		while(!goingout) {
 
+		System.out.println("이름을 입력하세요");
+        String name = sc.nextLine();
+        
+        // 2]초성(ㄱ,ㄴ,ㄷ....ㅎ)얻기
+        char firstChar = CommonUtilities.getfirstCharacter(name);
+        System.out.println("입력한 글자의 초성자음:" + firstChar);
+        if (firstChar == '0') {
+           System.out.println("한글명이 아닙니다"); continue;
+        }
+        System.out.println("주소를 입력하세요");
+        String addr = sc.nextLine();
+        System.out.println("전화번호를 입력하세요");
+        String tel = sc.nextLine();
+        System.out.println("나이를 입력하세요");
+        int age = Integer.parseInt(sc.nextLine());
+        // 3] 초성이 한글 이름인 경우
+        // 맵컬렉션(address)에 firstChar 키값이 존재하는지 판단
+        if (!address.containsKey(firstChar)) {// 키값이 없는 경우.
+                                      // 해당 키값이
+           // value타입인 List<Address>객체 생성
+           List<Address> valueList = new Vector<Address>();
+           
+        } 
+        else {// 키값이 존재한다면
+              // 해당 키값으로 기존에 저장된 객체를 얻어온다
+        	List<Address> valueList = null; 
+           valueList = address.get(firstChar);
+        }
+        // 입력한 객체를 추가
+        valueList.add(new Address(name, tel, addr, age));
+        address.put(firstChar, valueList);
+        //출력
+        System.out.println("키값을 알때: "+address.get("ㄱ"));
+    	Set<Character> keys = address.keySet();
+	    for (Character key : keys) {
+	       System.out.println("[" + key + "로 시작하는 명단]");
+	       List<Address> values = address.get(key);
+	       for (Address value : values)
+	          value.printAddress();
+	       
+	}
+        goingout=true;
+		}////while
+	      }	////////importData
+
+
+	
 	private void printData() {
-		      for(Contact con:contact) con.print(); // [ㄱ으로 시작하는 명단 이런식으로 갈 것]
-		      backToFirst();
-	}////////printData
+	 	Set<Character> keys = address.keySet();
+	 	System.out.println(address.keySet());
+	    for (Character key : keys) {
+	       System.out.println("[" + key + "로 시작하는 명단]");
+	       List<Address> values = address.get(key);
+	       for (Address value : values)
+	          value.printAddress();
+	}
 
+	}
 
-	private void searchData() {
-		Scanner sc= new Scanner(System.in);
-		System.out.println("검색하실 연락처의 이름을 입력해주세요");
-		String gotname= sc.nextLine();
-		 for (Contact con:contact) { 
-	         if (gotname.equals(con.name))
-	             System.out.println("요청하신 결과는 다음과 같습니다.");  
-	        	 con.print();
-	        	 System.out.println("\r\n");
-	         backToFirst();
-	      } ////////// for
-	         // 검색된 이름이 없는 경우]
-	      System.out.println(gotname + "로 검색된 정보가 없습니다\r\n");
-	      backToFirst();
-	}////////modifyData
-
-	
-	private void exitProgram() {
-		System.out.println("프로그램을 종료합니다");
-		System.exit(0);
-	}//////exitProgram()
-
-	public void backToFirst() {
-		mainmenu();
-		getmenu();
-		separation(gotNumb);
-	}/////////backToFirst
-	
+private void searchData() {
+    while (true) {
+        Scanner sc= new Scanner(System.in);
+    	System.out.println("찾는 사람은 누구입니까?");
+        String name = sc.nextLine();
+        char searchKey = CommonUtilities.getfirstCharacter(name);
+        if (address.containsKey(searchKey)) {// 찾는 사람이 있는 경우
+           // 키값으로 밸류값 꺼내오기
+           List<Address> values = address.get(searchKey);
+           boolean isExist = false;
+           for (Address value : values) {
+              if (name.equals(value.name)) {
+                 value.printAddress();
+                 isExist = true;
+                 break;
+              }
+           } //// for
+           if (isExist == true)
+              break;
+           System.out.println("해당하는 사람이 없어요(키값 존재)");
+        } /// if
+        else
+           System.out.println("해당하는 사람이 없어요(키값 미존재)");
+     } /////// while
+}
 	
 }///////////////////////AddressLogic
