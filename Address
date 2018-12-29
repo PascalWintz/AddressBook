@@ -1,0 +1,43 @@
+package addressbook;
+
+class Address implements Comparable<Address>{
+	// [멤버변수]
+	String name;
+	String tel;
+	String addr;
+	int age;
+
+	// 인자 생성자
+	public Address(String name, String tel, String addr, int age) {
+		this.name = name;
+		this.tel = tel;
+		this.addr = addr;
+		this.age = age;
+	}/////
+		// [멤버 메소드]
+
+	String getAddress() {
+		return String.format("이름:%s,나이:%s,전번:%s,주소:%s", name, age, tel, addr);
+	}
+
+	void printAddress() {
+		System.out.println(getAddress());
+	}
+	@Override
+	public int compareTo(Address target) {
+		//이름으로 정렬]
+		//오름차순]
+		//return name.compareTo(target.name);
+		//내림차순]
+		//return target.name.compareTo(name);
+		//[나이로 정렬]
+		//오름차순]
+		//return age-target.age;
+		//내림차순]
+		return target.age-age;
+		
+		//return 0;
+	}
+
+
+}//////////////////////// class
