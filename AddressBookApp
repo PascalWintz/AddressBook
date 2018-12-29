@@ -1,7 +1,6 @@
 package addressbook;
 
-
-public class AddressBookApp {
+public class AddressbookApp {
 
 	public static void main(String[] args) {
 		while(true) {AddressLogic logic = new AddressLogic();
